@@ -7,12 +7,16 @@ import os
 DATA_FOLDER = 'data/'
 
 class QuestionDatabase:
-    def __init__(self):
+    def __init__(self, small=False):
         self.data = {}
-        for fn in os.listdir(DATA_FOLDER):
+        for fn in sorted(os.listdir(DATA_FOLDER)):
+            if 'question' not in fn:
+                continue
             for qid, data in yaml.load(open(DATA_FOLDER + fn)).iteritems():
                 q = Question(data)
                 self.data[qid] = q
+            if small:
+                break
     
     def close(self):
         data = collections.defaultdict(dict)
