@@ -1,4 +1,3 @@
-from collections import OrderedDict
 import pprint
 
 KEY_FIELDS = ['id', 'title', 'tags', 'answer_count',  'last_activity_at']
@@ -10,7 +9,7 @@ class Question:
             
             
     def data(self):
-        data = OrderedDict()
+        data = {}
         for field in KEY_FIELDS:
             data[field] = getattr(self, field)
         return data
