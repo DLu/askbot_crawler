@@ -32,7 +32,7 @@ class QuestionDatabase:
         n = len(self.data)
         pn = n/50+1
         print "Load page %d"%pn
-        self.add_questions( load_question_page(page=pn, sort='activity-asc') )
+        self.add_questions( load_questions(page=pn, sort='activity-asc') )
             
         
         

@@ -13,9 +13,15 @@ def load_question_page(page=None, sort=None):
     if sort:
         params.append('sort=%s'%sort)
     url += '&'.join(params)
-    x = query(url)
+    return query(url)
+    
+def load_questions(page=None, sort=None)
+    x = load_question_page(page, sort)
     questions = []
     for q in x['questions']:
         questions.append( Question(q) )
     return questions
 
+def question_info():
+    x = load_question_page()
+    return x['pages'], x['count']
