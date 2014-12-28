@@ -34,7 +34,7 @@ class QuestionDatabase:
         while True:
             n = len(self.data)
             pn = n/50+1
-            if pn>pages:
+            if pn>=pages:
                 break
             print "Load page %d"%pn
             self.add_questions( load_questions(page=pn, sort='activity-asc') )
