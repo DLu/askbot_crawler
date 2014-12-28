@@ -5,10 +5,14 @@ from question import *
 def query(url):
     return json.load(urllib2.urlopen(url))
     
-def load_question_page(page=None):
-    url = 'http://answers.ros.org/api/v1/questions/'
+def load_question_page(page=None, sort=None):
+    url = 'http://answers.ros.org/api/v1/questions/?'
+    params = []
     if page:
-        url += '?page=%d'%page
+        params.append('page=%d'%page)
+    if sort:
+        params.append('sort=%s'%sort)
+    url += '&'.join(params)
     x = query(url)
     questions = []
     for q in x['questions']:
