@@ -15,7 +15,7 @@ def load_question_page(page=None, sort=None):
     url += '&'.join(params)
     return query(url)
     
-def load_questions(page=None, sort=None)
+def load_questions(page=None, sort=None):
     x = load_question_page(page, sort)
     questions = []
     for q in x['questions']:

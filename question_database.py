@@ -28,17 +28,22 @@ class QuestionDatabase:
         for q in qs:
             self.data[ q.id ] = q
             
-    def update(self):
-        n = len(self.data)
-        pn = n/50+1
-        print "Load page %d"%pn
-        self.add_questions( load_questions(page=pn, sort='activity-asc') )
-            
-        
+    def update(self, max_count=10):
+        pages, count = question_info()
+        c = 0
+        while True:
+            n = len(self.data)
+            pn = n/50+1
+            if pn>pages:
+                break
+            print "Load page %d"%pn
+            self.add_questions( load_questions(page=pn, sort='activity-asc') )
+            c += 1
+            if c >= max_count:
+                break
+        print "Database size: %d"%len(self.data)
         
 if __name__=='__main__':
     db = QuestionDatabase()
-    for x in range(10):
-        db.update()
-        print len(db.data)
+    db.update()
     db.close()
