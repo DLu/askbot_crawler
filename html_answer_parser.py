@@ -1,8 +1,9 @@
 from bs4 import BeautifulSoup
 import re
 import dateutil.parser, time
+import urllib2
 
-USER_PATTERN_S = 'http://answers.ros.org/users/(\d+)/.*/'
+USER_PATTERN_S = '.*/users/(\d+)/.*/'
 USER_PATTERN = re.compile(USER_PATTERN_S)
 
 def find_all(soup, name, cname):
@@ -11,11 +12,12 @@ def find_all(soup, name, cname):
 def find(soup, name, cname):
     return soup.find(name, {'class': cname})
 
-def parse_answers(contents):
+def parse_answers(contents, qid):
     soup = BeautifulSoup(contents)
     answers = {}
     for div in find_all(soup, 'div', 'answer'):
         answer = {}
+        answer['qid'] = qid
         answer['id'] = int(div['data-post-id'])
         if 'accepted-answer' in div['class']:
             answer['accepted'] = True
@@ -31,11 +33,20 @@ def parse_answers(contents):
                 answer['last_activity_at'] = ep
             else:
                 answer['added_at'] = ep
-            
-        m = USER_PATTERN.search(find(update, 'a', 'avatar-box')['href'])
-        if m:
-            answer['user'] = int(m.group(1))
+        
+        userbox = find(update, 'a', 'avatar-box')
+        if userbox:
+            m = USER_PATTERN.search(userbox['href'])
+            if m:
+                answer['user'] = int(m.group(1))
+            else:
+                print userbox
+                
         answers[ answer['id'] ] = answer
     return answers
 
+def get_answers(qid):
+    url = 'http://answers.ros.org/question/%d'%qid
+    page = urllib2.urlopen(url).read()
+    return parse_answers(page, qid)
 
