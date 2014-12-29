@@ -1,6 +1,5 @@
 from question_database import QuestionDatabase
 from html_answer_parser import get_answers
-from answer import Answer
 import yaml
 import collections
 import os
