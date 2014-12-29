@@ -1,42 +1,57 @@
-from question import Question
 from crawler import *
 import yaml
 import collections
 import os
+from progressbar import ProgressBar
 
 DATA_FOLDER = 'data/'
 
-class QuestionDatabase:
+class Database(dict):
+    def __init__(self, filenames=[]):
+        pbar = ProgressBar(maxval=len(filenames))
+        print "Reading database"
+        for i, fn in enumerate(filenames):
+            self.update(yaml.load(open(fn)))
+            pbar.update(i)
+        pbar.finish()
+        print "Database size:", len(self)
+            
+    def write_database(self, pattern):
+        data = collections.defaultdict(dict)
+        print "Writing database"
+        for key, value in self.iteritems():
+            bucket = key - (key % 1000)
+            data[bucket][key] = value
+        pbar = ProgressBar(maxval=len(data))
+        for i, bucket in enumerate(sorted(data)):
+            fn = pattern % bucket
+            yaml.dump(data[bucket], open(fn, 'w'))
+            pbar.update(i)
+        pbar.finish()
+            
+def grab_files(folder, pattern, small=False):
+    fs = sorted([folder + x for x in os.listdir(folder) if pattern in x])
+    if small:
+        return fs[:1]
+    else:
+        return fs
+
+class QuestionDatabase(Database):
     def __init__(self, small=False):
-        self.data = {}
-        for fn in sorted(os.listdir(DATA_FOLDER)):
-            if 'question' not in fn:
-                continue
-            for qid, data in yaml.load(open(DATA_FOLDER + fn)).iteritems():
-                q = Question(data)
-                self.data[qid] = q
-            if small:
-                break
+        Database.__init__(self, grab_files(DATA_FOLDER, 'question', small))
     
     def close(self):
-        data = collections.defaultdict(dict)
-        for qid, q in self.data.iteritems():
-            bucket = qid - (qid % 1000)
-            data[bucket][qid] = q.data()
-        for bucket in sorted(data):
-            fn = 'questions%07d.yaml'%bucket
-            print 'Writing',fn
-            yaml.dump(data[bucket], open(DATA_FOLDER + fn, 'w'))
+        self.write_database(DATA_FOLDER + 'questions%07d.yaml')
         
     def add_questions(self, qs):
         for q in qs:
-            self.data[ q.id ] = q
+            self[ q.id ] = q
             
-    def update(self, max_count=10):
+    def update_from_web(self, max_count=10):
         pages, count = question_info()
         c = 0
         while True:
-            n = len(self.data)
+            n = len(self)
             pn = n/50+1
             if pn>=pages:
                 break
@@ -45,9 +60,9 @@ class QuestionDatabase:
             c += 1
             if c >= max_count:
                 break
-        print "Database size: %d"%len(self.data)
+        print "Database size: %d"%len(self)
         
 if __name__=='__main__':
     db = QuestionDatabase()
-    db.update()
+    db.update_from_web()
     db.close()
