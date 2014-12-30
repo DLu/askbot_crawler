@@ -1,8 +1,9 @@
 from crawler import *
 import yaml
 import collections
-import os
+import os, sys
 from progressbar import ProgressBar
+from html_answer_parser import get_answers
 
 DATA_FOLDER = 'data/'
 
@@ -23,6 +24,8 @@ class Database(dict):
         for key, value in self.iteritems():
             bucket = key - (key % 1000)
             data[bucket][key] = value
+        if len(data)==0:
+            return
         pbar = ProgressBar(maxval=len(data))
         for i, bucket in enumerate(sorted(data)):
             fn = pattern % bucket
@@ -63,7 +66,42 @@ class QuestionDatabase(Database):
                 break
         print "Database size: %d"%len(self)
         
+class AnswerDatabase(Database):
+    def __init__(self):
+        Database.__init__(self, grab_files(DATA_FOLDER, 'answer'))
+        
+    def close(self):
+        self.write_database(DATA_FOLDER + 'answers%07d.yaml')
+    
+    def update_from_web(self, qdb, max_count=10):
+        c = 0
+        for qid, q in qdb.iteritems():
+            if 'answer_ids' in q or q.get('answer_ids', -10)==0:
+                continue
+            print qid
+            try:
+                answers = get_answers(qid)
+            except Exception, e:
+                print e
+                break
+            q['answer_ids'] = answers.keys()
+            self.update(answers)
+            
+            c+=1
+            if c >= max_count:
+                break
+            
+        print "Database size: %d"%len(self)
+
+        
 if __name__=='__main__':
-    db = QuestionDatabase()
-    db.update_from_web()
-    db.close()
+    if 'questions' in sys.argv:
+        db = QuestionDatabase()
+        db.update_from_web()
+        db.close()
+    elif 'answers' in sys.argv:
+        qdb = QuestionDatabase(True)
+        db = AnswerDatabase()
+        db.update_from_web(qdb)
+        db.close()
+        qdb.close()
