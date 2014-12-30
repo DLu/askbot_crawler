@@ -97,6 +97,22 @@ class AnswerDatabase(Database):
         print "Database size: %d"%len(self)
 
         
+class AskbotDatabase:
+    def __init__(self):
+        self.qdb = QuestionDatabase(True)
+        self.adb = AnswerDatabase()
+        
+    def close(self):
+        self.adb.close()
+        self.qdb.close()
+        
+    def get_topic_map(self):
+        topics = collections.defaultdict(list)
+        for qid, q in self.qdb.iteritems():
+            for tag in q['tags']:
+                topics[tag].append(q)
+        return topics
+        
 if __name__=='__main__':
     if 'questions' in sys.argv:
         db = QuestionDatabase()
