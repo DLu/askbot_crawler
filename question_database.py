@@ -59,7 +59,7 @@ class QuestionDatabase(Database):
             pn = n/50+1
             if pn>=pages:
                 break
-            print "Load page %d"%pn
+            print "Load page %d/%d"%(pn, pages)
             self.add_questions( load_questions(page=pn, sort='activity-asc') )
             c += 1
             if c >= max_count:
