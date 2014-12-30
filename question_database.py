@@ -85,6 +85,9 @@ class AnswerDatabase(Database):
                 print e
                 break
             q['answer_ids'] = answers.keys()
+            for aid, answer in answers.iteritems():
+                if 'accepted' in answer:
+                    q['answered'] = True
             self.update(answers)
             
             c+=1
