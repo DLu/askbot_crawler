@@ -8,12 +8,13 @@ DATA_FOLDER = 'data/'
 
 class Database(dict):
     def __init__(self, filenames=[]):
-        pbar = ProgressBar(maxval=len(filenames))
-        print "Reading database"
-        for i, fn in enumerate(filenames):
-            self.update(yaml.load(open(fn)))
-            pbar.update(i)
-        pbar.finish()
+        if len(filenames)>0:
+            pbar = ProgressBar(maxval=len(filenames))
+            print "Reading database"
+            for i, fn in enumerate(filenames):
+                self.update(yaml.load(open(fn)))
+                pbar.update(i)
+            pbar.finish()
         print "Database size:", len(self)
             
     def write_database(self, pattern):
@@ -45,7 +46,7 @@ class QuestionDatabase(Database):
         
     def add_questions(self, qs):
         for q in qs:
-            self[ q.id ] = q
+            self[ q['id'] ] = q
             
     def update_from_web(self, max_count=10):
         pages, count = question_info()
