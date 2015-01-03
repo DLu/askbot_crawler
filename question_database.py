@@ -75,10 +75,10 @@ class AnswerDatabase(Database):
     
     def update_from_web(self, qdb, max_count=10):
         c = 0
+        pbar = ProgressBar(maxval=max_count)
         for qid, q in qdb.iteritems():
             if 'answer_ids' in q or q.get('answer_ids', -10)==0:
                 continue
-            print qid
             try:
                 answers = get_answers(qid)
             except Exception, e:
@@ -91,9 +91,10 @@ class AnswerDatabase(Database):
             self.update(answers)
             
             c+=1
+            pbar.update(c)
             if c >= max_count:
                 break
-            
+        pbar.finish()
         print "Database size: %d"%len(self)
 
         
@@ -119,7 +120,7 @@ if __name__=='__main__':
         db.update_from_web()
         db.close()
     elif 'answers' in sys.argv:
-        qdb = QuestionDatabase(True)
+        qdb = QuestionDatabase()
         db = AnswerDatabase()
         db.update_from_web(qdb)
         db.close()
