@@ -72,6 +72,18 @@ class AnswerDatabase(Database):
         
     def close(self):
         self.write_database(DATA_FOLDER + 'answers%07d.yaml')
+        
+    def update_question(self, qid, q):
+        try:
+            answers = get_answers(qid)
+        except Exception, e:
+            print e
+            return
+        q['answer_ids'] = answers.keys()
+        for aid, answer in answers.iteritems():
+            if 'accepted' in answer:
+                q['answered'] = True
+        self.update(answers)
     
     def update_from_web(self, qdb, max_count=10):
         c = 0
@@ -79,24 +91,22 @@ class AnswerDatabase(Database):
         for qid, q in qdb.iteritems():
             if 'answer_ids' in q or q.get('answer_ids', -10)==0:
                 continue
-            try:
-                answers = get_answers(qid)
-            except Exception, e:
-                print e
-                break
-            q['answer_ids'] = answers.keys()
-            for aid, answer in answers.iteritems():
-                if 'accepted' in answer:
-                    q['answered'] = True
-            self.update(answers)
-            
+            self.update_question(qid, q)
             c+=1
             pbar.update(c)
             if c >= max_count:
                 break
         pbar.finish()
         print "Database size: %d"%len(self)
-
+        
+    def progressive_update(self):
+        for fn in grab_files(DATA_FOLDER, 'question'):
+            print "%s (%d)", len(self)
+            data = yaml.load(open(fn))
+            for qid, q in data.iteritems():
+                self.update_question(qid, q)
+            yaml.dump(data, open(fn, 'w'))
+            
         
 class AskbotDatabase:
     def __init__(self):
@@ -125,3 +135,7 @@ if __name__=='__main__':
         db.update_from_web(qdb)
         db.close()
         qdb.close()
+    elif 'ap' in sys.argv:
+        db = AnswerDatabase()
+        db.progressive_update()
+        db.close()
