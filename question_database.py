@@ -101,7 +101,7 @@ class AnswerDatabase(Database):
         
     def progressive_update(self):
         for fn in grab_files(DATA_FOLDER, 'question'):
-            print "%s (%d)", len(self)
+            print "%s (%d)"%(fn, len(self))
             data = yaml.load(open(fn))
             for qid, q in data.iteritems():
                 self.update_question(qid, q)
