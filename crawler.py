@@ -1,9 +1,13 @@
 import json
 import urllib2
-
+import re
 import unicodedata
 
 KEY_FIELDS = ['id', 'title', 'tags', 'answer_count',  'answer_ids', 'added_at', 'last_activity_at']
+GRAVATAR_PATTERN_S = '//www.gravatar.com/avatar/([^\?]*)\?.*'
+GRAVATAR_PATTERN = re.compile(GRAVATAR_PATTERN_S)
+AVATAR_PATTERN_S = 'http://answers.ros.org/avatar/render_primary/(\d+)/48/'
+AVATAR_PATTERN = re.compile(AVATAR_PATTERN_S)
 
 def query(url):
     return json.load(urllib2.urlopen(url))
@@ -15,8 +19,8 @@ def clean(s):
         return [unicodedata.normalize('NFKD', x).encode('ascii','ignore') for x in s]
     return s
     
-def load_question_page(page=None, sort=None):
-    url = 'http://answers.ros.org/api/v1/questions/?'
+def load_page(name, page=None, sort=None):
+    url = 'http://answers.ros.org/api/v1/%s/?'%name
     params = []
     if page:
         params.append('page=%d'%page)
@@ -24,6 +28,12 @@ def load_question_page(page=None, sort=None):
         params.append('sort=%s'%sort)
     url += '&'.join(params)
     return query(url)
+    
+def load_question_page(page=None, sort=None):
+    return load_page('questions', page, sort)
+    
+def load_user_page(page=None, sort=None):
+    return load_page('users', page, sort)
     
 def load_questions(page=None, sort=None):
     x = load_question_page(page, sort)
@@ -38,7 +48,30 @@ def load_questions(page=None, sort=None):
         q2['user'] = q['author']['id']
         questions.append( q2 )
     return questions
-
+    
+def load_users(page=None):
+    x = load_user_page(page=page, sort='recent')
+    users = []
+    for u in x['users']:
+        u2 = {}
+        for field in ['username', 'id']:
+            u2[field] = clean(u[field])
+        m = GRAVATAR_PATTERN.match(u['avatar'])
+        if m:
+            u2['hash'] = clean(m.group(1))
+        else:
+            m2 = AVATAR_PATTERN.match(u['avatar'])
+            if not m2:
+                u2['avatar'] = clean(u['avatar'])
+                print u2['avatar']
+        users.append(u2)
+    return users
+    
+    
 def question_info():
     x = load_question_page()
+    return x['pages'], x['count']
+    
+def user_info():
+    x = load_user_page()
     return x['pages'], x['count']

@@ -107,6 +107,31 @@ class AnswerDatabase(Database):
                 self.update_question(qid, q)
             yaml.dump(data, open(fn, 'w'))
             
+class UserDatabase(Database):
+    def __init__(self):
+        Database.__init__(self, grab_files(DATA_FOLDER, 'users'))
+    
+    def close(self):
+        self.write_database(DATA_FOLDER + 'users%07d.yaml')
+        
+    def add_users(self, us):
+        for u in us:
+            self[ u['id'] ] = u
+        
+    def update_from_web(self, max_count=10):
+        pages, count = user_info()
+        c = 0
+        while True:
+            n = len(self)
+            pn = n/10+1
+            if pn>=pages:
+                break
+            print "Load page %d/%d"%(pn, pages)
+            self.add_users( load_users(page=pn) )
+            c += 1
+            if c >= max_count:
+                break
+        print "Database size: %d"%len(self)
         
 class AskbotDatabase:
     def __init__(self):
@@ -135,6 +160,10 @@ if __name__=='__main__':
         db.update_from_web(qdb)
         db.close()
         qdb.close()
+    elif 'users' in sys.argv:
+        udb = UserDatabase()
+        udb.update_from_web()
+        udb.close()
     elif 'ap' in sys.argv:
         db = AnswerDatabase()
         db.progressive_update()
