@@ -188,7 +188,7 @@ class AskbotDatabase:
         return topics
         
     def get_user(self, uid):
-        retur self.udb.get_user(uid)
+        return self.udb.get_user(uid)
         
 if __name__=='__main__':
     if 'questions' in sys.argv:
