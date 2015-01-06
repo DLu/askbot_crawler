@@ -2,7 +2,7 @@ from question_database import AskbotDatabase
 from utils import *
 from collections import OrderedDict
 
-def generate_topics_page(db, fn='table.html'):
+def generate_topics_page(db, fn='website/table.html'):
     data = []
     #print '<tr><th>Tag<th># answers<th># answered<th># questions'
     m = db.get_topic_map()
