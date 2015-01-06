@@ -140,10 +140,12 @@ class AskbotDatabase:
     def __init__(self):
         self.qdb = QuestionDatabase()
         self.adb = AnswerDatabase()
+        self.udb = UserDatabase()
         
     def close(self):
         self.adb.close()
         self.qdb.close()
+        self.udb.close()
         
     def get_topic_map(self):
         topics = collections.defaultdict(list)
