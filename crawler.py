@@ -49,24 +49,30 @@ def load_questions(page=None, sort=None):
         questions.append( q2 )
     return questions
     
+def process_user(u):
+    u2 = {}
+    for field in ['username', 'id']:
+        u2[field] = clean(u[field])
+    m = GRAVATAR_PATTERN.match(u['avatar'])
+    if m:
+        u2['hash'] = clean(m.group(1))
+    else:
+        m2 = AVATAR_PATTERN.match(u['avatar'])
+        if not m2:
+            u2['avatar'] = clean(u['avatar'])
+            print u2['avatar']
+    return u2    
+    
 def load_users(page=None):
     x = load_user_page(page=page, sort='recent')
     users = []
     for u in x['users']:
-        u2 = {}
-        for field in ['username', 'id']:
-            u2[field] = clean(u[field])
-        m = GRAVATAR_PATTERN.match(u['avatar'])
-        if m:
-            u2['hash'] = clean(m.group(1))
-        else:
-            m2 = AVATAR_PATTERN.match(u['avatar'])
-            if not m2:
-                u2['avatar'] = clean(u['avatar'])
-                print u2['avatar']
-        users.append(u2)
+        users.append( process_user(u) )
     return users
     
+def load_user(uid):
+    x = load_page('users/%d'%uid)
+    return process_user(x) 
     
 def question_info():
     x = load_question_page()

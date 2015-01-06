@@ -163,6 +163,12 @@ class UserDatabase(Database):
                 break
         self.print_size()
         
+    def get_user(self, uid):
+        if uid in self:
+            return self[uid]
+        self[uid] = load_user(uid)
+        return self[uid]
+        
 class AskbotDatabase:
     def __init__(self):
         self.qdb = QuestionDatabase()
@@ -180,6 +186,9 @@ class AskbotDatabase:
             for tag in q['tags']:
                 topics[tag].append(q)
         return topics
+        
+    def get_user(self, uid):
+        retur self.udb.get_user(uid)
         
 if __name__=='__main__':
     if 'questions' in sys.argv:
