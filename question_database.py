@@ -81,6 +81,7 @@ class QuestionDatabase(Database):
             questions = load_questions(page=page, sort='activity-desc')
             for q in questions:
                 qid = q['id']
+                print "New question", qid
                 if qid not in self:
                     self[ qid ] = q
                     ids.append( qid ) 
@@ -92,6 +93,7 @@ class QuestionDatabase(Database):
                         ids.append( qid )
                     else:
                         more = False
+                        print "Old activity!"
             page += 1
         return ids
         
@@ -201,12 +203,14 @@ if __name__=='__main__':
     else:
         db = QuestionDatabase()
         qids = db.update_with_latest()
-        adb = AnswerDatabase()
-        pbar = ProgressBar(maxval=len(qids))
-        for i, qid in enumerate(qids):
-            adb.update_question(qid, db[qid])
-            pbar.update(i)
-        pbar.finish()
-        adb.print_size()
+        print "%d new questions"%qids
+        if len(qids)>0:
+            adb = AnswerDatabase()
+            pbar = ProgressBar(maxval=len(qids))
+            for i, qid in enumerate(qids):
+                adb.update_question(qid, db[qid])
+                pbar.update(i)
+            pbar.finish()
+            adb.print_size()
+            adb.close()
         db.close()
-        adb.close()
