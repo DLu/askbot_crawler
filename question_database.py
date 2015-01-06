@@ -8,19 +8,25 @@ from html_answer_parser import get_answers
 DATA_FOLDER = 'data/'
 
 class Database(dict):
-    def __init__(self, filenames=[]):
+    def __init__(self, name):
+        self.name = name
+        filenames = grab_files(DATA_FOLDER, name)
         if len(filenames)>0:
             pbar = ProgressBar(maxval=len(filenames))
-            print "Reading database"
+            print "Reading %s database"%self.name
             for i, fn in enumerate(filenames):
                 self.update(yaml.load(open(fn)))
                 pbar.update(i)
             pbar.finish()
-        print "Database size:", len(self)
+        self.print_size()
             
-    def write_database(self, pattern):
+    def print_size(self):
+        print '%s Database size: %d' % (self.name, len(self))
+            
+    def write_database(self, bucketsize=1000):
+        pattern = DATA_FOLDER + self.name + '%07d.yaml'
         data = collections.defaultdict(dict)
-        print "Writing database"
+        print "Writing %s database"%self.name
         for key, value in self.iteritems():
             bucket = key - (key % 1000)
             data[bucket][key] = value
@@ -32,6 +38,11 @@ class Database(dict):
             yaml.dump(data[bucket], open(fn, 'w'))
             pbar.update(i)
         pbar.finish()
+        
+    def add_items(self, items):
+        for q in items:
+            self[ q['id'] ] = q
+        
             
 def grab_files(folder, pattern, small=False):
     fs = sorted([folder + x for x in os.listdir(folder) if pattern in x])
@@ -42,14 +53,10 @@ def grab_files(folder, pattern, small=False):
 
 class QuestionDatabase(Database):
     def __init__(self, small=False):
-        Database.__init__(self, grab_files(DATA_FOLDER, 'question', small))
-    
-    def close(self):
-        self.write_database(DATA_FOLDER + 'questions%07d.yaml')
+        Database.__init__(self, 'questions')
         
-    def add_questions(self, qs):
-        for q in qs:
-            self[ q['id'] ] = q
+    def close(self):
+        self.write_database()
             
     def update_from_web(self, max_count=10):
         pages, count = question_info()
@@ -60,18 +67,40 @@ class QuestionDatabase(Database):
             if pn>=pages:
                 break
             print "Load page %d/%d"%(pn, pages)
-            self.add_questions( load_questions(page=pn, sort='activity-asc') )
+            self.add_items( load_questions(page=pn, sort='activity-asc') )
             c += 1
             if c >= max_count:
                 break
-        print "Database size: %d"%len(self)
+        self.print_size()
+        
+    def update_with_latest(self):
+        more = True
+        page = 0
+        ids = []
+        while more:
+            questions = load_questions(page=page, sort='activity-desc')
+            for q in questions:
+                qid = q['id']
+                if qid not in self:
+                    self[ qid ] = q
+                    ids.append( qid ) 
+                else:
+                    old_activity = self[ qid ]['last_activity_at']
+                    new_activity = q['last_activity_at']
+                    if old_activity != new_activity:
+                        self[ qid ] = q
+                        ids.append( qid )
+                    else:
+                        more = False
+            page += 1
+        return ids
         
 class AnswerDatabase(Database):
     def __init__(self):
-        Database.__init__(self, grab_files(DATA_FOLDER, 'answer'))
+        Database.__init__(self, 'answers')
         
     def close(self):
-        self.write_database(DATA_FOLDER + 'answers%07d.yaml')
+        self.write_database()
         
     def update_question(self, qid, q):
         try:
@@ -97,7 +126,7 @@ class AnswerDatabase(Database):
             if c >= max_count:
                 break
         pbar.finish()
-        print "Database size: %d"%len(self)
+        self.print_size()
         
     def progressive_update(self):
         for fn in grab_files(DATA_FOLDER, 'question'):
@@ -112,14 +141,10 @@ class AnswerDatabase(Database):
             
 class UserDatabase(Database):
     def __init__(self):
-        Database.__init__(self, grab_files(DATA_FOLDER, 'users'))
+        Database.__init__(self, 'users')
     
     def close(self):
-        self.write_database(DATA_FOLDER + 'users%07d.yaml')
-        
-    def add_users(self, us):
-        for u in us:
-            self[ u['id'] ] = u
+        self.write_database()
         
     def update_from_web(self, max_count=10):
         pages, count = user_info()
@@ -130,20 +155,22 @@ class UserDatabase(Database):
             if pn>=pages:
                 break
             print "Load page %d/%d"%(pn, pages)
-            self.add_users( load_users(page=pn) )
+            self.add_items( load_users(page=pn) )
             c += 1
             if c >= max_count:
                 break
-        print "Database size: %d"%len(self)
+        self.print_size()
         
 class AskbotDatabase:
     def __init__(self):
         self.qdb = QuestionDatabase()
         self.adb = AnswerDatabase()
+        self.udb = UserDatabase()
         
     def close(self):
         self.adb.close()
         self.qdb.close()
+        self.udb.close()
         
     def get_topic_map(self):
         topics = collections.defaultdict(list)
@@ -171,3 +198,15 @@ if __name__=='__main__':
         db = AnswerDatabase()
         db.progressive_update()
         db.close()
+    else:
+        db = QuestionDatabase()
+        qids = db.update_with_latest()
+        adb = AnswerDatabase()
+        pbar = ProgressBar(maxval=len(qids))
+        for i, qid in enumerate(qids):
+            adb.update_question(qid, db[qid])
+            pbar.update(i)
+        pbar.finish()
+        adb.print_size()
+        db.close()
+        adb.close()
