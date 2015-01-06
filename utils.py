@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 def generate_table(M):
     s = '<table class="sortable">\n'
     s += '<tr><th>'
@@ -23,3 +25,14 @@ def bar_images(amount, fn1='bar.png', amount2=0, fn2='barb.png'):
     if amount2 > 0:
         s += S % (fn2, amount2)
     return s
+    
+def generate_question_table(questions, db):
+    rows = []
+    for q in questions:
+        m = OrderedDict()
+        m['Title'] = '<a href="http://answers.ros.org/question/%d">%s</a>'%(q['id'], q['title'])
+        m['Answers'] = q['answer_count']
+        m['Answered?'] = q.get('answered', False)
+        m['Asker'] = db.get_user( q['user'] )['username']
+        rows.append(m)
+    return generate_table(rows)
