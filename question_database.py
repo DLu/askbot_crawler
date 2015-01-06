@@ -104,6 +104,9 @@ class AnswerDatabase(Database):
             print "%s (%d)"%(fn, len(self))
             data = yaml.load(open(fn))
             for qid, q in data.iteritems():
+                if 'answer_ids' in q or q.get('answer_ids', -10)==0:
+                    continue
+
                 self.update_question(qid, q)
             yaml.dump(data, open(fn, 'w'))
             
