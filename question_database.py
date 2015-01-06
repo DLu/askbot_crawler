@@ -135,7 +135,7 @@ class UserDatabase(Database):
         
 class AskbotDatabase:
     def __init__(self):
-        self.qdb = QuestionDatabase(True)
+        self.qdb = QuestionDatabase()
         self.adb = AnswerDatabase()
         
     def close(self):
