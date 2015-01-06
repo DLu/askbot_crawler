@@ -73,6 +73,28 @@ class QuestionDatabase(Database):
                 break
         self.print_size()
         
+    def update_with_latest(self):
+        more = True
+        page = 0
+        ids = []
+        while more:
+            questions = load_questions(page=page, sort='activity-desc')
+            for q in questions:
+                qid = q['id']
+                if qid not in self:
+                    self[ qid ] = q
+                    ids.append( qid ) 
+                else:
+                    old_activity = self[ qid ]['last_activity_at']
+                    new_activity = q['last_activity_at']
+                    if old_activity != new_activity:
+                        self[ qid ] = q
+                        ids.append( qid )
+                    else:
+                        more = False
+            page += 1
+        return ids
+        
 class AnswerDatabase(Database):
     def __init__(self):
         Database.__init__(self, 'answers')
@@ -173,3 +195,15 @@ if __name__=='__main__':
         db = AnswerDatabase()
         db.progressive_update()
         db.close()
+    else:
+        db = QuestionDatabase()
+        qids = db.update_with_latest()
+        adb = AnswerDatabase()
+        pbar = ProgressBar(maxval=len(qids))
+        for i, qid in enumerate(qids):
+            adb.update_question(qid, db[qid])
+            pbar.update(i)
+        pbar.finish()
+        adb.print_size()
+        db.close()
+        adb.close()
