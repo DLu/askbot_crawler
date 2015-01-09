@@ -12,14 +12,9 @@ def generate_topic_page(db, topic, questions):
     print questions
     
     s = generate_question_table(questions, db)
-    print
-    print s
     
     with open(fn, 'w') as f:
         f.write( s )
-    
-    
-    exit(0)
 
 def generate_topics_page(db, fn='website/table.html'):
     data = []
@@ -30,7 +25,7 @@ def generate_topics_page(db, fn='website/table.html'):
         n = len(m[J])
         answered = len([x for x in m[J] if 'answered' in x])
         answers = sum([x['answer_count'] for x in m[J]])
-        X['Tag'] = J
+        X['Tag'] = '<a href="topics/%s.html">%s</a>'%(J,J)
         X['Visualization'] = bar_images(answered, amount2=n-answered)
         X['# answered'] = answered
         X['# answers'] = answers
