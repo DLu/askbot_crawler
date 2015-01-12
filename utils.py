@@ -36,3 +36,9 @@ def generate_question_table(questions, db):
         m['Asker'] = db.get_user( q['user'] )['username']
         rows.append(m)
     return generate_table(rows)
+    
+def get_avatar_url(u, size=100):
+    if 'hash' in u:
+        return 'http://www.gravatar.com/avatar/%s?s=%d'%(u['hash'], size)
+    else:
+        return 'http://answers.ros.org/avatar/render_primary/%d/48/'%(u['id'])

@@ -8,9 +8,6 @@ TOPICS_FOLDER = 'website/topics'
 def generate_topic_page(db, topic, questions):
     fn = TOPICS_FOLDER + '/' + topic + '.html'
     
-    print topic
-    print questions
-    
     s = generate_question_table(questions, db)
     
     with open(fn, 'w') as f:
