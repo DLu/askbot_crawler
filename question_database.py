@@ -212,7 +212,7 @@ if __name__=='__main__':
     else:
         db = QuestionDatabase()
         qids = db.update_with_latest()
-        print "%d new questions"%qids
+        print "%d new questions"%len(qids)
         if len(qids)>0:
             adb = AnswerDatabase()
             pbar = ProgressBar(maxval=len(qids))
