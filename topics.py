@@ -11,6 +11,7 @@ def generate_topic_page(db, topic, questions):
     s = generate_question_table(questions, db)
     
     with open(fn, 'w') as f:
+        f.write( get_sortable_link('../') )
         f.write( s )
 
 def generate_topics_page(db, fn='website/table.html'):

@@ -1,5 +1,8 @@
 from collections import OrderedDict
 
+def get_sortable_link(prefix=''):
+    return '<script src="%ssorttable.js"></script>\n'%prefix
+
 def generate_table(M):
     s = '<table class="sortable">\n'
     s += '<tr><th>'
@@ -14,7 +17,7 @@ def generate_table(M):
     return s
     
 def generate_table_page(M, preamble=''):
-    s = '<script src="sorttable.js"></script>\n'
+    s = get_sortable_link()
     s += preamble
     s += generate_table(M)
     return s
