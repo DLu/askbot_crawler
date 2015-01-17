@@ -189,6 +189,21 @@ class AskbotDatabase:
                 topics[tag].append(q)
         return topics
         
+    def get_questions_by_user(self):
+        questions = collections.defaultdict(list)        
+        for qid, q in self.qdb.iteritems():
+            questions[ q.get('user', 0) ].append(qid)
+        return questions
+        
+    def get_answers_by_user(self):
+        answers = collections.defaultdict(list)        
+        for aid, a in self.adb.iteritems():
+            answers[ a.get('user', 0) ].append(aid)
+        return answers
+        
+    def get_question(self, qid):
+        return self.qdb[qid]
+        
     def get_answer(self, aid):
         return self.adb[aid]
         
