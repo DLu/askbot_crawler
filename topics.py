@@ -43,4 +43,5 @@ if __name__=='__main__':
     if not os.path.exists(TOPICS_FOLDER):
         os.mkdir(TOPICS_FOLDER)
     generate_topics_page(db)
+    db.close()
     
