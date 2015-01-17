@@ -45,3 +45,19 @@ def get_avatar_url(u, size=100):
         return 'http://www.gravatar.com/avatar/%s?s=%d'%(u['hash'], size)
     else:
         return 'http://answers.ros.org/avatar/render_primary/%d/48/'%(u['id'])
+        
+def generate_user_table(users, db):
+    rows = []
+    keys = None
+    for uid in users:
+        if keys is None:
+            keys = users[uid].keys()
+        user = db.get_user(uid)
+        m = OrderedDict()
+        m['Avatar'] = '<img src="%s" alt="avatar"/>'%get_avatar_url(user)
+        name = user['username']
+        m['Name'] = '<a href="http://answers.ros.org/users/%d/%s/">%s</a>'%(uid, name, name)
+        for key in keys:
+            m[key] = users[uid][key]
+        rows.append(m)
+    return generate_table(rows)

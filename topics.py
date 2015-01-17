@@ -1,6 +1,6 @@
 from question_database import AskbotDatabase
 from utils import *
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 import os
 
 TOPICS_FOLDER = 'website/topics'
@@ -10,9 +10,23 @@ def generate_topic_page(db, topic, questions):
     
     s = generate_question_table(questions, db)
     
+    users = defaultdict( lambda : defaultdict(int) )
+    for q in questions:
+        users[ q['user'] ]['asked']+=1
+        for aid in q.get('answer_ids', []):
+            a = db.get_answer(aid)
+            uid = a.get('user', 0)
+            users[ uid ]['answered'] += 1
+            if a.get('accepted', False):
+                users[ uid ]['accepted'] += 1
+                
+    s2 = generate_user_table(users, db)
+    
     with open(fn, 'w') as f:
         f.write( get_sortable_link('../') )
         f.write( s )
+        f.write( s2 )
+
 
 def generate_topics_page(db, fn='website/table.html'):
     data = []

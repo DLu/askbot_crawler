@@ -166,6 +166,8 @@ class UserDatabase(Database):
     def get_user(self, uid):
         if uid in self:
             return self[uid]
+        if uid == 0:
+            return {'id': 0, 'username': 'Anonymous'}
         self[uid] = load_user(uid)
         return self[uid]
         
@@ -186,6 +188,9 @@ class AskbotDatabase:
             for tag in q['tags']:
                 topics[tag].append(q)
         return topics
+        
+    def get_answer(self, aid):
+        return self.adb[aid]
         
     def get_user(self, uid):
         return self.udb.get_user(uid)
