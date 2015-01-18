@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import re
 import dateutil.parser, time
 import urllib2
+from utils import SERVER
 
 USER_PATTERN_S = '.*/users/(\d+)/.*/'
 USER_PATTERN = re.compile(USER_PATTERN_S)
@@ -46,7 +47,7 @@ def parse_answers(contents, qid):
     return answers
 
 def get_answers(qid):
-    url = 'http://answers.ros.org/question/%d'%qid
+    url = '%s/question/%d'%(SERVER, qid)
     page = urllib2.urlopen(url).read()
     return parse_answers(page, qid)
 

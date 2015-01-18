@@ -2,11 +2,12 @@ import json
 import urllib2
 import re
 import unicodedata
+from utils import SERVER
 
 KEY_FIELDS = ['id', 'title', 'tags', 'answer_count',  'answer_ids', 'added_at', 'last_activity_at']
 GRAVATAR_PATTERN_S = '//www.gravatar.com/avatar/([^\?]*)\?.*'
 GRAVATAR_PATTERN = re.compile(GRAVATAR_PATTERN_S)
-AVATAR_PATTERN_S = 'http://answers.ros.org/avatar/render_primary/(\d+)/48/'
+AVATAR_PATTERN_S = SERVER + '/avatar/render_primary/(\d+)/48/'
 AVATAR_PATTERN = re.compile(AVATAR_PATTERN_S)
 
 def query(url):
@@ -20,7 +21,7 @@ def clean(s):
     return s
     
 def load_page(name, page=None, sort=None):
-    url = 'http://answers.ros.org/api/v1/%s/?'%name
+    url = '%s/api/v1/%s/?'%(SERVER, name)
     params = []
     if page:
         params.append('page=%d'%page)

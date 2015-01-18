@@ -1,5 +1,7 @@
 from collections import OrderedDict
 
+SERVER = 'http://answers.ros.org'
+
 def get_sortable_link(prefix=''):
     return '<script src="%ssorttable.js"></script>\n'%prefix
 
@@ -33,7 +35,7 @@ def generate_question_table(questions, db):
     rows = []
     for q in questions:
         m = OrderedDict()
-        m['Title'] = '<a href="http://answers.ros.org/question/%d">%s</a>'%(q['id'], q['title'])
+        m['Title'] = '<a href="%s/question/%d">%s</a>'%(SERVER, q['id'], q['title'])
         m['Answers'] = q['answer_count']
         m['Answered?'] = q.get('answered', False)
         m['Asker'] = db.get_user( q['user'] )['username']
@@ -44,7 +46,7 @@ def get_avatar_url(u, size=100):
     if 'hash' in u:
         return 'http://www.gravatar.com/avatar/%s?s=%d'%(u['hash'], size)
     else:
-        return 'http://answers.ros.org/avatar/render_primary/%d/48/'%(u['id'])
+        return '%s/avatar/render_primary/%d/48/'%(SERVER, u['id'])
         
 def generate_user_table(users, db):
     rows = []
@@ -56,7 +58,7 @@ def generate_user_table(users, db):
         m = OrderedDict()
         m['Avatar'] = '<img src="%s" alt="avatar"/>'%get_avatar_url(user)
         name = user['username']
-        m['Name'] = '<a href="http://answers.ros.org/users/%d/%s/">%s</a>'%(uid, name, name)
+        m['Name'] = '<a href="%s/users/%d/%s/">%s</a>'%(SERVER, uid, name, name)
         for key in keys:
             m[key] = users[uid][key]
         rows.append(m)
