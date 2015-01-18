@@ -4,6 +4,7 @@ import collections
 import os, sys
 from progressbar import ProgressBar
 from html_answer_parser import get_answers
+from utils import sort_by_topic
 
 DATA_FOLDER = 'data/'
 
@@ -183,11 +184,7 @@ class AskbotDatabase:
         self.udb.close()
         
     def get_topic_map(self):
-        topics = collections.defaultdict(list)
-        for qid, q in self.qdb.iteritems():
-            for tag in q['tags']:
-                topics[tag].append(q)
-        return topics
+        return sort_by_topic( self.qdb.values() )
         
     def get_questions_by_user(self):
         questions = collections.defaultdict(list)        

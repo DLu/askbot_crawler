@@ -1,6 +1,13 @@
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 SERVER = 'http://answers.ros.org'
+
+def sort_by_topic(questions):
+    topics = defaultdict(list)
+    for q in questions:
+        for tag in q['tags']:
+            topics[tag].append(q)
+    return topics
 
 def get_sortable_link(prefix=''):
     return '<script src="%ssorttable.js"></script>\n'%prefix
@@ -48,6 +55,9 @@ def get_avatar_url(u, size=100):
     else:
         return '%s/avatar/render_primary/%d/48/'%(SERVER, u['id'])
         
+def get_avatar_img(u, size=100):
+    return '<img src="%s" alt="avatar"/>'%get_avatar_url(u, size)
+        
 def generate_user_table(users, db):
     rows = []
     keys = None
@@ -56,7 +66,7 @@ def generate_user_table(users, db):
             keys = users[uid].keys()
         user = db.get_user(uid)
         m = OrderedDict()
-        m['Avatar'] = '<img src="%s" alt="avatar"/>'%get_avatar_url(user)
+        m['Avatar'] = get_avatar_img(user)
         name = user['username']
         m['Name'] = '<a href="%s/users/%d/%s/">%s</a>'%(SERVER, uid, name, name)
         for key in keys:
