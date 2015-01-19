@@ -44,6 +44,8 @@ def generate_user_page(db, user, questions, answers, accepted, q_topics, a_topic
     with open(fn, 'w') as f:
         f.write( get_sortable_link('../') )
         f.write('<table><tr><td>%s<td><h1>%s</h1></table>'%(get_avatar_img(user), user['username']))
+        if user['id'] != 0:
+            f.write(get_user_link(user, local=False, text="%s Profile"%SERVER))
         f.write("<h3>Questions Asked: %d </h3>"%len(questions))
         f.write( generate_topic_viz(q_topics) )
         f.write("<h3>Questions Answered: %d </h3>"%len(answers))

@@ -60,14 +60,15 @@ def get_avatar_url(u, size=100):
 def get_avatar_img(u, size=100):
     return '<img src="%s" alt="avatar"/>'%get_avatar_url(u, size)
     
-def get_user_link(user, local=True, prefix=''):
+def get_user_link(user, local=True, text=None, prefix=''):
     name = user['username']
+    if text is None:
+        text = name
     if local:
         link = '%susers/%s.html'%(prefix, name)
-        print link
     else:
-        link = '%s/users/%d/%s/'%(SERVER, uid, name)
-    return '<a href="%s">%s</a>'%(link, name)
+        link = '%s/users/%d/%s/'%(SERVER, user['id'], name)
+    return '<a href="%s">%s</a>'%(link, text)
         
 def generate_user_table(users, db, prefix=''):
     rows = []
