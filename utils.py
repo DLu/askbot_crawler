@@ -53,7 +53,7 @@ def get_avatar_url(u, size=100):
     if u['id'] == 0:
         return 'http://www.gravatar.com/avatar/?s=%d'%(size)        
     elif 'hash' in u:
-        return 'http://www.gravatar.com/avatar/%s?s=%d'%(u['hash'], size)
+        return 'http://www.gravatar.com/avatar/%s?s=%d&d=identicon'%(u['hash'], size)
     else:
         return '%s/avatar/render_primary/%d/48/'%(SERVER, u['id'])
         
