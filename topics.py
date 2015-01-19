@@ -23,7 +23,7 @@ def generate_topic_page(db, topic, questions):
     s2 = generate_user_table(users, db, prefix='../')
     
     with open(fn, 'w') as f:
-        f.write( get_sortable_link('../') )
+        f.write( JQUERY_LINKS )
         f.write( s )
         f.write( s2 )
 

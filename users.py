@@ -42,7 +42,7 @@ def generate_user_page(db, user, questions, answers, accepted, q_topics, a_topic
     #s = generate_question_table(questions, db)
     
     with open(fn, 'w') as f:
-        f.write( get_sortable_link('../') )
+        f.write( JQUERY_LINKS )
         f.write('<table><tr><td>%s<td><h1>%s</h1></table>'%(get_avatar_img(user), user['username']))
         if user['id'] != 0:
             f.write(get_user_link(user, local=False, text="%s Profile"%SERVER))
@@ -95,7 +95,7 @@ def generate_users_page(db, fn='website/users.html'):
         data[uid] = X
         
     with open(fn, 'w') as f:
-        f.write( get_sortable_link() )
+        f.write( JQUERY_LINKS )
         f.write( generate_user_table(data, db) )
          
 

@@ -2,6 +2,11 @@ from collections import OrderedDict, defaultdict
 
 SERVER = 'http://answers.ros.org'
 
+JQUERY_LINKS = """
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
+"""
+
 def sort_by_topic(questions):
     topics = defaultdict(list)
     for q in questions:
@@ -9,24 +14,28 @@ def sort_by_topic(questions):
             topics[tag].append(q)
     return topics
 
-def get_sortable_link(prefix=''):
-    return '<script src="%ssorttable.js"></script>\n'%prefix
-
-def generate_table(M):
-    s = '<table class="sortable">\n'
-    s += '<tr><th>'
+def generate_table(M, id="rostable"):
+    s = '<table id="%s">\n'%id
+    s += '<thead>\n<tr><th>'
     s += '<th>'.join(M[0].keys())
-    s += '\n'
+    s += '\n</thead>\n<tbody>\n'
     for m in M:
         s += '<tr>'
         for k,v in m.iteritems():
             s += '<td>' + str(v)
         s += '\n'
-    s += '</table>\n'
+    s += '</tbody>\n</table>\n'
+    s += """
+    <script>
+$(document).ready(function() {
+    $('#%s').DataTable();
+} );
+
+</script>"""%id
     return s
     
 def generate_table_page(M, preamble=''):
-    s = get_sortable_link()
+    s = JQUERY_LINKS
     s += preamble
     s += generate_table(M)
     return s
@@ -38,7 +47,7 @@ def bar_images(amount, fn1='bar.png', amount2=0, fn2='barb.png'):
         s += S % (fn2, amount2)
     return s
     
-def generate_question_table(questions, db):
+def generate_question_table(questions, db, tid=None):
     rows = []
     for q in questions:
         m = OrderedDict()
@@ -47,7 +56,9 @@ def generate_question_table(questions, db):
         m['Answered?'] = q.get('answered', False)
         m['Asker'] = db.get_user( q['user'] )['username']
         rows.append(m)
-    return generate_table(rows)
+    if not tid:
+        tid = 'questions'
+    return generate_table(rows, id=tid)
     
 def get_avatar_url(u, size=100):
     if u['id'] == 0:
@@ -70,7 +81,7 @@ def get_user_link(user, local=True, text=None, prefix=''):
         link = '%s/users/%d/%s/'%(SERVER, user['id'], name)
     return '<a href="%s">%s</a>'%(link, text)
         
-def generate_user_table(users, db, prefix=''):
+def generate_user_table(users, db, prefix='', tid=None):
     rows = []
     keys = None
     for uid in users:
@@ -83,4 +94,6 @@ def generate_user_table(users, db, prefix=''):
         for key in keys:
             m[key] = users[uid][key]
         rows.append(m)
-    return generate_table(rows)
+    if not tid:
+        tid = 'users'
+    return generate_table(rows, id=tid)
