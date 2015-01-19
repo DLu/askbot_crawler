@@ -59,8 +59,17 @@ def get_avatar_url(u, size=100):
         
 def get_avatar_img(u, size=100):
     return '<img src="%s" alt="avatar"/>'%get_avatar_url(u, size)
+    
+def get_user_link(user, local=True, prefix=''):
+    name = user['username']
+    if local:
+        link = '%susers/%s.html'%(prefix, name)
+        print link
+    else:
+        link = '%s/users/%d/%s/'%(SERVER, uid, name)
+    return '<a href="%s">%s</a>'%(link, name)
         
-def generate_user_table(users, db):
+def generate_user_table(users, db, prefix=''):
     rows = []
     keys = None
     for uid in users:
@@ -69,8 +78,7 @@ def generate_user_table(users, db):
         user = db.get_user(uid)
         m = OrderedDict()
         m['Avatar'] = get_avatar_img(user)
-        name = user['username']
-        m['Name'] = '<a href="%s/users/%d/%s/">%s</a>'%(SERVER, uid, name, name)
+        m['Name'] = get_user_link(user, prefix=prefix)
         for key in keys:
             m[key] = users[uid][key]
         rows.append(m)

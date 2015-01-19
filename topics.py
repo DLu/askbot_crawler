@@ -20,7 +20,7 @@ def generate_topic_page(db, topic, questions):
             if a.get('accepted', False):
                 users[ uid ]['accepted'] += 1
                 
-    s2 = generate_user_table(users, db)
+    s2 = generate_user_table(users, db, prefix='../')
     
     with open(fn, 'w') as f:
         f.write( get_sortable_link('../') )
