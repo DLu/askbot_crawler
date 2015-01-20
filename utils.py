@@ -5,7 +5,7 @@ SERVER = 'http://answers.ros.org'
 JQUERY_LINKS = """
 <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="http://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
-<link href="jquery.dataTables.css" rel="stylesheet" type="text/css"/>
+<link href="http://cdn.datatables.net/1.10.4/css/jquery.dataTables.css" rel="stylesheet" type="text/css"/>
 """
 
 def sort_by_topic(questions):
