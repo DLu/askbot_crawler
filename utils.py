@@ -10,12 +10,6 @@ def sort_by_topic(questions):
             topics[tag].append(q)
     return topics
 
-def generate_table_page(M, preamble=''):
-    s = JQUERY_LINKS
-    s += preamble
-    s += generate_table(M)
-    return s
-    
 def bar_images(amount, fn1='bar.png', amount2=0, fn2='barb.png'):
     S = '<img src="%s" width="%dpx" height="16px"/>'
     s = S % (fn1, amount)
@@ -23,7 +17,7 @@ def bar_images(amount, fn1='bar.png', amount2=0, fn2='barb.png'):
         s += S % (fn2, amount2)
     return s
     
-def generate_question_table(questions, db, tid=None):
+def generate_question_table(questions, db, tid=None, params={}):
     rows = []
     for q in questions:
         m = OrderedDict()
@@ -34,7 +28,7 @@ def generate_question_table(questions, db, tid=None):
         rows.append(m)
     if not tid:
         tid = 'questions'
-    return generate_table(rows, id=tid)
+    return generate_table(rows, id=tid, params=params)
     
 def get_avatar_url(u, size=100):
     if u['id'] == 0:

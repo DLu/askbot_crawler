@@ -39,9 +39,9 @@ def generate_topics_page(db, fn='website/topics.html'):
         answers = sum([x['answer_count'] for x in m[J]])
         X['Tag'] = '<a href="topics/%s.html">%s</a>'%(J,J)
         X['Visualization'] = bar_images(answered, amount2=n-answered)
+        X['# questions'] = n
         X['# answered'] = answered
         X['# answers'] = answers
-        X['# questions'] = n
         X['% answered'] = '%.1f%%'%(float(answered)*100/n)
         X['Answer Ratio'] = '%.1f'%(float(answers)/n)
         
@@ -49,8 +49,8 @@ def generate_topics_page(db, fn='website/topics.html'):
         
         data.append(X)
     with open(fn, 'w') as f:
-        f.write( generate_table_page( data ) )
-         
+        f.write(JQUERY_LINKS)
+        f.write(generate_table(data,params={"order": [(2, "desc")]}))         
 
 if __name__=='__main__':
     db = AskbotDatabase()
