@@ -164,13 +164,16 @@ class UserDatabase(Database):
                 break
         self.print_size()
         
-    def get_user(self, uid):
+    def get_user(self, uid, load=False):
         if uid in self:
             return self[uid]
         if uid == 0:
             return {'id': 0, 'username': 'Anonymous'}
-        self[uid] = load_user(uid)
-        return self[uid]
+        if load:
+            self[uid] = load_user(uid)
+            return self[uid]
+        else:
+            return {'id': uid, 'username': 'User%d'%uid}
         
 class AskbotDatabase:
     def __init__(self):
