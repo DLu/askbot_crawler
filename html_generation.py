@@ -7,7 +7,7 @@ JQUERY_LINKS = """
 <link href="http://cdn.datatables.net/1.10.4/css/jquery.dataTables.css" rel="stylesheet" type="text/css"/>
 """
 
-INFINITY_SORTER = """
+INFINITY_SORT = """
 <script>
 $.fn.dataTable.ext.type.order['infinity-pre'] = function ( d ) {
     if(isNaN(d)){

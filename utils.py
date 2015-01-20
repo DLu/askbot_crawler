@@ -57,7 +57,7 @@ def get_user_link(user, local=True, text=None, prefix=''):
         link = '%s/users/%d/%s/'%(SERVER, user['id'], name)
     return '<a href="%s">%s</a>'%(link, text)
         
-def generate_user_table(users, db, prefix='', tid=None):
+def generate_user_table(users, db, prefix='', tid=None, params={}):
     rows = []
     keys = None
     for uid in users:
@@ -72,4 +72,4 @@ def generate_user_table(users, db, prefix='', tid=None):
         rows.append(m)
     if not tid:
         tid = 'users'
-    return generate_table(rows, id=tid)
+    return generate_table(rows, id=tid, params=params)

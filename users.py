@@ -1,6 +1,7 @@
 from question_database import AskbotDatabase
 from utils import *
 from collections import OrderedDict, defaultdict
+from html_generation import *
 import os
 
 USERS_FOLDER = 'website/users'
@@ -96,7 +97,8 @@ def generate_users_page(db, fn='website/users.html'):
         
     with open(fn, 'w') as f:
         f.write( JQUERY_LINKS )
-        f.write( generate_user_table(data, db) )
+        f.write( INFINITY_SORT )
+        f.write( generate_user_table(data, db, params={"order": [(3, "desc")], "columnDefs": [{"type": "infinity", "targets": 5}]}) )
          
 
 if __name__=='__main__':
