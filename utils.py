@@ -1,12 +1,7 @@
 from collections import OrderedDict, defaultdict
+from html_generation import generate_table, JQUERY_LINKS
 
 SERVER = 'http://answers.ros.org'
-
-JQUERY_LINKS = """
-<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="http://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
-<link href="http://cdn.datatables.net/1.10.4/css/jquery.dataTables.css" rel="stylesheet" type="text/css"/>
-"""
 
 def sort_by_topic(questions):
     topics = defaultdict(list)
@@ -15,26 +10,6 @@ def sort_by_topic(questions):
             topics[tag].append(q)
     return topics
 
-def generate_table(M, id="rostable"):
-    s = '<table class="display" id="%s">\n'%id
-    s += '<thead>\n<tr><th>'
-    s += '<th>'.join(M[0].keys())
-    s += '\n</thead>\n<tbody>\n'
-    for m in M:
-        s += '<tr>'
-        for k,v in m.iteritems():
-            s += '<td>' + str(v)
-        s += '\n'
-    s += '</tbody>\n</table>\n'
-    s += """
-    <script>
-$(document).ready(function() {
-    $('#%s').DataTable();
-} );
-
-</script>"""%id
-    return s
-    
 def generate_table_page(M, preamble=''):
     s = JQUERY_LINKS
     s += preamble
