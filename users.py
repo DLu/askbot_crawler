@@ -85,7 +85,7 @@ def generate_users_page(db, fn='website/users.html'):
         if len(qs)>0:
             ratio = len(ans)/len(qs)
         else:
-            ratio = "Infinity"
+            ratio = "&infin;"
         
         X['Helpful Ratio'] = ratio
         X['Top Topics'] = summary
