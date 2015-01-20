@@ -11,6 +11,7 @@ DATA_FOLDER = 'data/'
 class Database(dict):
     def __init__(self, name):
         self.name = name
+        self.changed = False
         filenames = grab_files(DATA_FOLDER, name)
         if len(filenames)>0:
             pbar = ProgressBar(maxval=len(filenames))
@@ -25,6 +26,9 @@ class Database(dict):
         print '%s Database size: %d' % (self.name, len(self))
             
     def write_database(self, bucketsize=1000):
+        if not self.changed:
+            print "Skipping writing %s database"%self.name
+            return
         pattern = DATA_FOLDER + self.name + '%07d.yaml'
         data = collections.defaultdict(dict)
         print "Writing %s database"%self.name
@@ -41,6 +45,7 @@ class Database(dict):
         pbar.finish()
         
     def add_items(self, items):
+        self.changed = True
         for q in items:
             self[ q['id'] ] = q
         
@@ -96,6 +101,8 @@ class QuestionDatabase(Database):
                         more = False
                         print "Old activity!"
             page += 1
+        if len(ids)>0:
+            self.changed = True
         return ids
         
 class AnswerDatabase(Database):
@@ -116,6 +123,7 @@ class AnswerDatabase(Database):
             if 'accepted' in answer:
                 q['answered'] = True
         self.update(answers)
+        self.changed = True
     
     def update_from_web(self, qdb, max_count=10):
         c = 0
@@ -124,6 +132,7 @@ class AnswerDatabase(Database):
             if 'answer_ids' in q or q.get('answer_ids', -10)==0:
                 continue
             self.update_question(qid, q)
+            self.qdb.changed = True
             c+=1
             pbar.update(c)
             if c >= max_count:
@@ -140,6 +149,7 @@ class AnswerDatabase(Database):
                     continue
 
                 self.update_question(qid, q)
+                self.qdb.changed = True
             yaml.dump(data, open(fn, 'w'))
             
 class UserDatabase(Database):
@@ -164,13 +174,14 @@ class UserDatabase(Database):
                 break
         self.print_size()
         
-    def get_user(self, uid, load=False):
+    def get_user(self, uid, load=True):
         if uid in self:
             return self[uid]
         if uid == 0:
             return {'id': 0, 'username': 'Anonymous'}
         if load:
             self[uid] = load_user(uid)
+            self.changed = True
             return self[uid]
         else:
             return {'id': uid, 'username': 'User%d'%uid}
