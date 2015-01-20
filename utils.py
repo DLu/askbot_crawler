@@ -5,6 +5,7 @@ SERVER = 'http://answers.ros.org'
 JQUERY_LINKS = """
 <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="http://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
+<link href="jquery.dataTables.css" rel="stylesheet" type="text/css"/>
 """
 
 def sort_by_topic(questions):
@@ -15,7 +16,7 @@ def sort_by_topic(questions):
     return topics
 
 def generate_table(M, id="rostable"):
-    s = '<table id="%s">\n'%id
+    s = '<table class="display" id="%s">\n'%id
     s += '<thead>\n<tr><th>'
     s += '<th>'.join(M[0].keys())
     s += '\n</thead>\n<tbody>\n'
