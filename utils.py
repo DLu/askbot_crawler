@@ -1,5 +1,6 @@
 from collections import OrderedDict, defaultdict
 from html_generation import generate_table, JQUERY_LINKS
+import datetime
 
 SERVER = 'http://answers.ros.org'
 
@@ -25,6 +26,8 @@ def generate_question_table(questions, db, tid=None, params={}):
         m['Answers'] = q['answer_count']
         m['Answered?'] = q.get('answered', False)
         m['Asker'] = db.get_user( q['user'] )['username']
+        m['Created'] = str(datetime.datetime.fromtimestamp( q['added_at'] ))
+        m['Updated'] = str(datetime.datetime.fromtimestamp( q.get('last_activity_at', q['added_at']) ))
         rows.append(m)
     if not tid:
         tid = 'questions'
