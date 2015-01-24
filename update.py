@@ -3,6 +3,7 @@ import sys
 from question_database import *
 from users import generate_users_page
 from topics import generate_topics_page
+from index_page import generate_index_page
 
 if __name__=='__main__':
     db = AskbotDatabase()
@@ -10,5 +11,6 @@ if __name__=='__main__':
         db.super_update()
     generate_users_page(db)
     generate_topics_page(db)
+    generate_index_page()
     db.close()
 
