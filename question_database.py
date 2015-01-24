@@ -196,6 +196,18 @@ class AskbotDatabase:
         self.adb.close()
         self.qdb.close()
         self.udb.close()
+    
+    def super_update(self):
+        qids = self.qdb.update_with_latest()
+        print "%d new questions"%len(qids)
+        if len(qids)>0:
+            self.adb = AnswerDatabase()
+            pbar = ProgressBar(maxval=len(qids))
+            for i, qid in enumerate(qids):
+                self.adb.update_question(qid, self.qdb[qid])
+                pbar.update(i)
+            pbar.finish()
+            self.adb.print_size()
         
     def get_topic_map(self):
         return sort_by_topic( self.qdb.values() )
@@ -241,16 +253,6 @@ if __name__=='__main__':
         db.progressive_update()
         db.close()
     else:
-        db = QuestionDatabase()
-        qids = db.update_with_latest()
-        print "%d new questions"%len(qids)
-        if len(qids)>0:
-            adb = AnswerDatabase()
-            pbar = ProgressBar(maxval=len(qids))
-            for i, qid in enumerate(qids):
-                adb.update_question(qid, db[qid])
-                pbar.update(i)
-            pbar.finish()
-            adb.print_size()
-            adb.close()
+        db = AskbotDatabase()
+        db.super_update()
         db.close()
