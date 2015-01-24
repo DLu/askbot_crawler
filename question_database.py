@@ -180,11 +180,14 @@ class UserDatabase(Database):
         if uid == 0:
             return {'id': 0, 'username': 'Anonymous'}
         if load:
-            self[uid] = load_user(uid)
-            self.changed = True
-            return self[uid]
-        else:
-            return {'id': uid, 'username': 'User%d'%uid}
+            try:
+                self[uid] = load_user(uid)
+                self.changed = True
+                return self[uid]
+            except:
+                print "Cannot connect to internet"
+        
+        return {'id': uid, 'username': 'User%d'%uid}
         
 class AskbotDatabase:
     def __init__(self):
