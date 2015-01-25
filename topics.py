@@ -12,15 +12,15 @@ def generate_topic_page(db, topic, questions):
     
     users = defaultdict( lambda : defaultdict(int) )
     for q in questions:
-        users[ q['user'] ]['asked']+=1
+        users[ q['user'] ]['Asked']+=1
         for aid in q.get('answer_ids', []):
             a = db.get_answer(aid)
             uid = a.get('user', 0)
-            users[ uid ]['answered'] += 1
+            users[ uid ]['Answered'] += 1
             if a.get('accepted', False):
-                users[ uid ]['accepted'] += 1
+                users[ uid ]['Accepted'] += 1
                 
-    s2 = generate_user_table(users, db, prefix='../')
+    s2 = generate_user_table(users, db, prefix='../', keys=['Asked', 'Answered', 'Accepted'])
     
     with open(fn, 'w') as f:
         f.write( JQUERY_LINKS )
