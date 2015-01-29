@@ -20,7 +20,7 @@ def generate_topic_page(db, topic, questions):
             if a.get('accepted', False):
                 users[ uid ]['Accepted'] += 1
                 
-    s2 = generate_user_table(users, db, prefix='../', keys=['Asked', 'Answered', 'Accepted'])
+    s2 = generate_user_table(users, db, prefix='../', keys=['Asked', 'Answered', 'Accepted'], params={"order": [(3, "desc")]})
     
     with open(fn, 'w') as f:
         f.write( JQUERY_LINKS )
