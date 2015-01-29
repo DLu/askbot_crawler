@@ -19,6 +19,8 @@ $.fn.dataTable.ext.type.order['infinity-pre'] = function ( d ) {
 """
 
 def generate_table(M, id="rostable", params={}):
+    if len(M)==0:
+        return ''
     s = '<table class="display" id="%s">\n'%id
     s += '<thead>\n<tr><th>'
     s += '<th>'.join(M[0].keys())

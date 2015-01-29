@@ -8,7 +8,20 @@ TOPICS_FOLDER = 'website/topics'
 def generate_topic_page(db, topic, questions):
     fn = TOPICS_FOLDER + '/' + topic + '.html'
     
-    s = generate_question_table(questions, db)
+    closed = []
+    lonely = []
+    unfinished = []
+    
+    for question in questions:
+        if question.get('answered', False):
+            closed.append(question)
+        elif question['answer_count']==0:
+            lonely.append(question)
+        else:
+            unfinished.append(question)
+            
+    
+    s = generate_question_table(lonely, db, tid="t1") + generate_question_table(unfinished, db, tid="t2") + generate_question_table(closed, db, tid='t3')
     
     users = defaultdict( lambda : defaultdict(int) )
     for q in questions:
