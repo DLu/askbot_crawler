@@ -36,7 +36,7 @@ def generate_topic_page(db, topic, questions):
     s2 = generate_user_table(users, db, prefix='../', keys=['Asked', 'Answered', 'Accepted'], params={"order": [(3, "desc")]})
     
     with open(fn, 'w') as f:
-        f.write( JQUERY_LINKS )
+        f.write( header(topic + " - ROS Answered", JQUERY_LINKS, '../'))
         f.write( s )
         f.write( s2 )
 
@@ -62,7 +62,7 @@ def generate_topics_page(db, fn='website/topics.html'):
         
         data.append(X)
     with open(fn, 'w') as f:
-        f.write(JQUERY_LINKS)
+        f.write( header("Topics - ROS Answered", JQUERY_LINKS))
         f.write(generate_table(data,params={"order": [(2, "desc")]}))         
 
 if __name__=='__main__':

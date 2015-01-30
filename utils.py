@@ -1,5 +1,5 @@
 from collections import OrderedDict, defaultdict
-from html_generation import generate_table, JQUERY_LINKS
+from html_generation import *
 import datetime
 
 SERVER = 'http://answers.ros.org'
