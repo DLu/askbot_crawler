@@ -32,9 +32,10 @@ def get_summary(q_topics, a_topics, qlimit=-1, topic_n=3):
     return ', '.join(top)
     
 def generate_topic_viz(topics):
-    s = ''
+    s = '<div class="columns">\n'
     for topic in sort_map(topics):
         s += '%s: %d <br>\n'%(topic, len( topics[topic] ))
+    s += '</div>\n'
     return s
     
 def generate_user_page(db, user, questions, answers, accepted, q_topics, a_topics):
