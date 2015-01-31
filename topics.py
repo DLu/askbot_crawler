@@ -5,6 +5,18 @@ import os
 
 TOPICS_FOLDER = 'website/topics'
 
+def generate_section(questions, db, name, key):
+    s = '<span class="topichead">%s: %d</span>\n'%(name, len(questions))
+    if len(questions)==0:
+        s += '<br /><br />\n'
+        return s
+    s += '&nbsp;&nbsp;&nbsp;<a href="javascript:ReverseDisplay(\'%scontainer\')">[expand/collapse]</a><br/>\n'%key
+    s += '<span id="%scontainer" style="display: none">\n'%key
+    s += '<br />'
+    s += generate_question_table(questions, db, tid=key)
+    s += '</span>\n<br />\n'
+    return s
+
 def generate_topic_page(db, topic, questions):
     fn = TOPICS_FOLDER + '/' + topic + '.html'
     
@@ -20,8 +32,9 @@ def generate_topic_page(db, topic, questions):
         else:
             unfinished.append(question)
             
-    
-    s = generate_question_table(lonely, db, tid="t1") + generate_question_table(unfinished, db, tid="t2") + generate_question_table(closed, db, tid='t3')
+    s = generate_section(lonely, db, 'Questions with no answers', "t1") \
+        + generate_section(unfinished, db, 'Questions with no accepted answers', "t2") \
+        + generate_section(closed, db, 'Closed Questions', 't3')
     
     users = defaultdict( lambda : defaultdict(int) )
     for q in questions:
@@ -36,8 +49,11 @@ def generate_topic_page(db, topic, questions):
     s2 = generate_user_table(users, db, prefix='../', keys=['Asked', 'Answered', 'Accepted'], params={"order": [(3, "desc")]})
     
     with open(fn, 'w') as f:
-        f.write( header(topic + " - ROS Answered", JQUERY_LINKS, '../'))
+        f.write( header(topic + " - ROS Answered", JQUERY_LINKS, '../', True))
+        f.write( '<h1>%s</h1>\n' % topic )
         f.write( s )
+        f.write( '<br /> <hr /> <br />\n' )
+        f.write( '<h2>Users</h2>')
         f.write( s2 )
 
 

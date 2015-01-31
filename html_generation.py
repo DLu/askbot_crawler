@@ -18,12 +18,14 @@ $.fn.dataTable.ext.type.order['infinity-pre'] = function ( d ) {
 </script>
 """
 
-def header(title="ROS Answered", extra='', relative=''):
+def header(title="ROS Answered", extra='', relative='', hide=False):
     s = '<head>\n'
     s += '<title>%s</title>\n'%title
     s += extra
     s += '<link href="http://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet" type="text/css">\n'
     s += '<link href="%sanswered.css" rel="stylesheet" type="text/css"/>'%relative
+    if hide:
+        s+= '<script src="%sHide.js"></script>'%relative
     s += '</head>\n'
     return s
 

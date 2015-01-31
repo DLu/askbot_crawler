@@ -16,3 +16,8 @@ div.columns {
     -moz-column-count: 4; /* Firefox */
     column-count: 4;
 }
+
+span.topichead {
+    font-size: 150%;
+    font-weight: bold;
+}
