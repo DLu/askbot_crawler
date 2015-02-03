@@ -42,7 +42,7 @@ def get_avatar_url(u, size=100):
         return '%s/avatar/render_primary/%d/48/'%(SERVER, u['id'])
         
 def get_avatar_img(u, size=100):
-    return '<img src="%s" alt="avatar"/>'%get_avatar_url(u, size)
+    return '<img src="http://www.metrorobots.com/answers/default.jpg" data-src="%s" alt="avatar"/>'%get_avatar_url(u, size)
     
 def get_user_link(user, local=True, text=None, prefix=''):
     name = user['username']
@@ -68,4 +68,5 @@ def generate_user_table(users, db, prefix='', tid=None, params={}, keys=None):
         rows.append(m)
     if not tid:
         tid = 'users'
+    params['rowCallback']= "function( nRow, aData ) { var img = $('img', nRow); img.attr('src', img.attr('data-src')); }"
     return generate_table(rows, id=tid, params=params)

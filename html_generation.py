@@ -50,5 +50,11 @@ def generate_table(M, id="rostable", params={}):
         $('#%s').DataTable(%s);
     } );
 </script>"""%(id, json.dumps(params))
+    
+    # HACK
+    for k,v in params.iteritems():
+        if 'Callback' in k:
+            s = s.replace( '"%s"'%v, v)
+
     return s
     
