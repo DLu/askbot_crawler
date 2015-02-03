@@ -130,6 +130,9 @@ class AnswerDatabase(Database):
     
     def update_from_web(self, qdb, max_count=10, force=False):
         c = 0
+        if max_count is None:
+            max_count = len(qdb)
+
         pbar = ProgressBar(maxval=max_count)
         for qid, q in qdb.iteritems():
             if not force and ('answer_ids' in q or q.get('answer_ids', -10)==0):
