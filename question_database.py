@@ -114,7 +114,7 @@ class AnswerDatabase(Database):
         
     def update_question(self, qid, q):
         try:
-            answers = get_answers(qid)
+            answers, closed = get_answers(qid)
         except Exception, e:
             print e
             return
@@ -122,17 +122,20 @@ class AnswerDatabase(Database):
         for aid, answer in answers.iteritems():
             if 'accepted' in answer:
                 q['answered'] = True
+        if closed:
+            print "Question %d closed!"%qid
+            q['closed'] = True
         self.update(answers)
         self.changed = True
     
-    def update_from_web(self, qdb, max_count=10):
+    def update_from_web(self, qdb, max_count=10, force=False):
         c = 0
         pbar = ProgressBar(maxval=max_count)
         for qid, q in qdb.iteritems():
-            if 'answer_ids' in q or q.get('answer_ids', -10)==0:
+            if not force and ('answer_ids' in q or q.get('answer_ids', -10)==0):
                 continue
             self.update_question(qid, q)
-            self.qdb.changed = True
+            qdb.changed = True
             c+=1
             pbar.update(c)
             if c >= max_count:

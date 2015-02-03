@@ -45,9 +45,17 @@ def parse_answers(contents, qid):
                 
         answers[ answer['id'] ] = answer
     return answers
+    
+CLOSED_KEY = "askbot['data']['threadIsClosed'] = "
+def is_closed(contents):
+    if CLOSED_KEY in contents:
+        i = contents.index(CLOSED_KEY)
+        i2 = contents.index(';', i)
+        return contents[i + len(CLOSED_KEY):i2]=='true'
+    return False
 
 def get_answers(qid):
     url = '%s/question/%d'%(SERVER, qid)
     page = urllib2.urlopen(url).read()
-    return parse_answers(page, qid)
+    return parse_answers(page, qid), is_closed(page)
 
