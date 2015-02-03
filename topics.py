@@ -25,7 +25,7 @@ def generate_topic_page(db, topic, questions):
     unfinished = []
     
     for question in questions:
-        if question.get('answered', False):
+        if question.get('answered', False) or question.get('closed', False):
             closed.append(question)
         elif question['answer_count']==0:
             lonely.append(question)
@@ -64,7 +64,7 @@ def generate_topics_page(db, fn='website/topics.html'):
     for J in sorted(m, key=lambda d: len(m[d])):
         X = OrderedDict()
         n = len(m[J])
-        answered = len([x for x in m[J] if 'answered' in x])
+        answered = len([x for x in m[J] if 'answered' in x or x.get('closed', False)])
         answers = sum([x['answer_count'] for x in m[J]])
         X['Tag'] = '<a href="topics/%s.html">%s</a>'%(J,J)
         X['Visualization'] = bar_images(answered, amount2=n-answered)
