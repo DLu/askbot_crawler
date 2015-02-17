@@ -3,7 +3,7 @@ from utils import *
 from collections import OrderedDict, defaultdict
 import os
 
-TOPICS_FOLDER = 'website/topics'
+TOPICS_FOLDER = ROOT + 'website/topics'
 
 def generate_section(questions, db, name, key):
     s = '<span class="topichead">%s: %d</span>\n'%(name, len(questions))

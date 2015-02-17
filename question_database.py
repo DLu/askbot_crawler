@@ -4,9 +4,9 @@ import collections
 import os, sys
 from progressbar import ProgressBar
 from html_answer_parser import get_answers
-from utils import sort_by_topic
+from utils import sort_by_topic, ROOT
 
-DATA_FOLDER = 'data/'
+DATA_FOLDER = ROOT + 'data/'
 
 class Database(dict):
     def __init__(self, name):

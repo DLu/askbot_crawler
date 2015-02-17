@@ -4,7 +4,7 @@ from collections import OrderedDict, defaultdict
 from html_generation import *
 import os
 
-USERS_FOLDER = 'website/users'
+USERS_FOLDER = ROOT + 'website/users'
 
 def sort_map(m):
     return sorted(m, key=lambda k: len(m[k]), reverse=True)

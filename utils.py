@@ -3,6 +3,7 @@ from html_generation import *
 import datetime
 
 SERVER = 'http://answers.ros.org'
+ROOT = ''
 
 def sort_by_topic(questions):
     topics = defaultdict(list)
