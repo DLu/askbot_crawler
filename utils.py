@@ -42,8 +42,12 @@ def get_avatar_url(u, size=100):
     else:
         return '%s/avatar/render_primary/%d/48/'%(SERVER, u['id'])
         
-def get_avatar_img(u, size=100):
-    return '<img src="http://www.metrorobots.com/answers/default.jpg" data-src="%s" alt="avatar"/>'%get_avatar_url(u, size)
+def get_avatar_img(u, size=100, autoload=True):
+    url = get_avatar_url(u, size)
+    if autoload:
+        return '<img src="%s" alt="avatar"/>'%url
+    else:
+        return '<img src="http://www.metrorobots.com/answers/default.jpg" data-src="%s" alt="avatar"/>'%url
     
 def get_user_link(user, local=True, text=None, prefix=''):
     name = user['username']
@@ -62,7 +66,7 @@ def generate_user_table(users, db, prefix='', tid=None, params={}, keys=None):
             keys = users[uid].keys()
         user = db.get_user(uid)
         m = OrderedDict()
-        m['Avatar'] = get_avatar_img(user)
+        m['Avatar'] = get_avatar_img(user, autoload=False)
         m['Name'] = get_user_link(user, prefix=prefix)
         for key in keys:
             m[key] = users[uid][key]
