@@ -58,7 +58,7 @@ def generate_user_page(db, user, questions, answers, accepted, q_topics, a_topic
         #f.write( s2 )
 
 
-def generate_users_page(db, fn='website/users.html'):
+def generate_users_page(db, fn=ROOT + 'website/users.html'):
     data = {}
     questions = db.get_questions_by_user()
     answers = db.get_answers_by_user()

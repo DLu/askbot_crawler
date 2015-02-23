@@ -57,7 +57,7 @@ def generate_topic_page(db, topic, questions):
         f.write( s2 )
 
 
-def generate_topics_page(db, fn='website/topics.html'):
+def generate_topics_page(db, fn=ROOT+'website/topics.html'):
     data = []
     #print '<tr><th>Tag<th># answers<th># answered<th># questions'
     m = db.get_topic_map()
