@@ -15,12 +15,10 @@ class Database(dict):
         self.changed = False
         filenames = grab_files(DATA_FOLDER, name)
         if len(filenames) > 0:
-            pbar = ProgressBar(maxval=len(filenames))
             print "Reading %s database" % self.name
-            for i, fn in enumerate(filenames):
+            pbar = ProgressBar()
+            for fn in pbar(filenames):
                 self.update(yaml.load(open(fn)))
-                pbar.update(i)
-            pbar.finish()
         self.print_size()
 
     def print_size(self):
@@ -38,12 +36,10 @@ class Database(dict):
             data[bucket][key] = value
         if len(data) == 0:
             return
-        pbar = ProgressBar(maxval=len(data))
-        for i, bucket in enumerate(sorted(data)):
+        pbar = ProgressBar()
+        for bucket in pbar(sorted(data)):
             fn = pattern % bucket
             yaml.dump(data[bucket], open(fn, 'w'))
-            pbar.update(i)
-        pbar.finish()
 
     def add_items(self, items):
         self.changed = True
@@ -212,11 +208,9 @@ class AskbotDatabase:
         print "%d new questions" % len(qids)
         if len(qids) > 0:
             self.adb = AnswerDatabase()
-            pbar = ProgressBar(maxval=len(qids))
-            for i, qid in enumerate(qids):
+            pbar = ProgressBar()
+            for qid in pbar(qids):
                 self.adb.update_question(qid, self.qdb[qid])
-                pbar.update(i)
-            pbar.finish()
             self.adb.print_size()
 
     def get_topic_map(self):
