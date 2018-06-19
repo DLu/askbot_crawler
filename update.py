@@ -12,6 +12,6 @@ if __name__ == '__main__':
             db.super_update()
         generate_users_page(db)
         generate_topics_page(db)
-        generate_index_page()
+        generate_index_page(db)
     finally:
         db.close()
