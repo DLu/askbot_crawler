@@ -1,5 +1,5 @@
 import datetime
-from html_generation import *
+from html_generation import header
 from utils import ROOT
 
 INDEX_PAGE = """
@@ -14,8 +14,7 @@ INDEX_PAGE = """
 
 def generate_index_page(fn='website/index.html'):
     with open(ROOT + fn, 'w') as f:
-        f.write( header() )
+        f.write(header())
         now = datetime.datetime.now()
-        date = '%d-%02d-%02d %02d:%02d' % ( now.year, now.month, now.day, now.hour, now.minute )
-        f.write(INDEX_PAGE % (date) )
-        
+        date = '%d-%02d-%02d %02d:%02d' % (now.year, now.month, now.day, now.hour, now.minute)
+        f.write(INDEX_PAGE % (date))
