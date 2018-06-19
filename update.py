@@ -7,9 +7,11 @@ from index_page import generate_index_page
 
 if __name__ == '__main__':
     db = AskbotDatabase()
-    if '-x' not in sys.argv:
-        db.super_update()
-    generate_users_page(db)
-    generate_topics_page(db)
-    generate_index_page()
-    db.close()
+    try:
+        if '-x' not in sys.argv:
+            db.super_update()
+        generate_users_page(db)
+        generate_topics_page(db)
+        generate_index_page()
+    finally:
+        db.close()
