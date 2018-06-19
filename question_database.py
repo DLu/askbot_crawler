@@ -238,7 +238,7 @@ class AskbotDatabase:
         return self.qdb[qid]
 
     def get_answer(self, aid):
-        return self.adb[aid]
+        return self.adb.get(aid)
 
     def get_user(self, uid):
         return self.udb.get_user(uid)

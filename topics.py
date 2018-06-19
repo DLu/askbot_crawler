@@ -42,6 +42,8 @@ def generate_topic_page(db, topic, questions):
         users[q['user']]['Asked'] += 1
         for aid in q.get('answer_ids', []):
             a = db.get_answer(aid)
+            if not a:
+                continue
             uid = a.get('user', 0)
             users[uid]['Answered'] += 1
             if a.get('accepted', False):
