@@ -12,7 +12,7 @@ def sort_by_topic(questions):
             topics[tag].append(q)
     return topics
 
-def bar_images(amount, fn1='bar.png', amount2=0, fn2='barb.png', factor=0.5):
+def bar_images(amount, fn1='bar.png', amount2=0, fn2='barb.png', factor=0.3):
     S = '<img src="%s" width="%dpx" height="16px"/>'
     pixels1 = max(1, int(amount * factor))
     s = S % (fn1, pixels1)
