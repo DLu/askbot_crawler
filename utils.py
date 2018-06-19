@@ -12,11 +12,13 @@ def sort_by_topic(questions):
             topics[tag].append(q)
     return topics
 
-def bar_images(amount, fn1='bar.png', amount2=0, fn2='barb.png'):
+def bar_images(amount, fn1='bar.png', amount2=0, fn2='barb.png', factor=0.5):
     S = '<img src="%s" width="%dpx" height="16px"/>'
-    s = S % (fn1, amount)
+    pixels1 = max(1, int(amount * factor))
+    s = S % (fn1, pixels1)
     if amount2 > 0:
-        s += S % (fn2, amount2)
+        pixels2 = max(1, int(amount2 * factor))
+        s += S % (fn2, pixels2)
     return s
 
 def generate_question_table(questions, db, tid=None, params={}):
